@@ -1,0 +1,25 @@
+(U60 n) = (n λp(+ 1 p) 0)
+
+(Gen 0) = Zero
+(Gen n) = ((Succ) (Gen (- n 1)))
+
+Succ = λpred λsucc λzero (succ (pred succ zero))
+Zero =       λsucc λzero zero
+
+(Pred n) =
+  // match n
+    (n
+  // case succ
+    λpred (pred)
+  // case zero
+    Nat.zero
+    )
+
+  //Scott Nat:
+  //λs λz (s λs λz (s λs λz (s λs λz z)))
+
+  //Church Nat:
+  //(λs λz (s (s (s z))) λp(p) 0)
+
+
+(Main n) = (λs λz (s (s (s z))) λp(p) 0)

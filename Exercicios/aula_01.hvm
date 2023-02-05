@@ -1,0 +1,160 @@
+// FORMA DE REPRESENTAR DADOS NA PROGRAMAÇÃO FUNCIONAL:
+//    1 - Construtores nativos (irredutíveis)
+//    2 - Lambdas Scott  Encoding
+//    3 - Lambdas Church Encoding
+
+// Se não é recursivo, ambos os lambdas são iguais
+
+// Tipo Booleano em 
+// Kind:
+// type Bool {
+//  true
+//  false
+// }
+
+// HVM
+True  = λtrue λfalse true 
+False = λtrue λfalse false 
+
+// type Pair {
+//  new (fst: Bool) (snd: Bool)
+// }
+
+New = λfst λsnd λnew (new fst snd)  
+
+// type Maybe {
+//  none
+//  some (value: Bool)
+// }
+
+//      campos|construtores      
+//        <-  |
+//            |
+None =        λnone λsome none 
+Some = λvalue λnone λsome (some value)
+
+
+//type Tree {
+//  T
+//  A: (fst: Nat) (snd: Nat)
+//  B: (fst: Nat) (snd: Nat) (trd: Nat)
+//}
+
+T =                λt λa λb t
+A = λfst λsnd      λt λa λb (a fst snd)
+B = λfst λsnd λtrd λt λa λb (b fst snd trd)
+
+// type Nat {
+//   zero
+//   succ (pred: Nat)
+// }
+
+// Scott Encoding
+Szero =       λzero λsucc zero 
+Ssucc = λpred λzero λsucc (succ pred)
+
+
+// Church Encoding
+Czero =       λzero λsucc zero 
+Csucc = λpred λzero λsucc (succ (pred zero succ)) 
+
+// type Tree {
+//   leaf
+//   node (val: Nat) (lft: Tree) (rgt: Tree)
+// }
+
+
+// Scott Encoding
+Leaf =                λleaf λnode leaf 
+Node = λval λlft λrgt λleaf λnode (node val lft rgt)
+
+// Church Encoding
+Leaf =                λleaf λnode leaf 
+Node = λval λlft λrgt λleaf λnode (node val (lft leaf node) (rgt leaf node))
+
+
+
+// ============= FUNÇÕES =============
+//       | Booleano λ-encoded
+//      \/
+// (Not a) = (a "oi" "tchau")
+
+// isso é o mesmo que:
+// match a {
+//  true  => "oi";
+//  false => "tchau";
+// }
+
+//                                         | Sendo N o número de construtores do tipo 
+//                                        \/
+// A aplicação de um dado Scott-Encoded a N argumentos é equivalente ao pattern-match desse tipo 
+
+(MyTrue a) = (a "oi" "tchau")
+
+
+// (Not a) = match a {
+//            True  => False;
+//            False => True;
+//          }
+//
+//           |
+//          \/
+//
+// (Not a) = match a {True => False; False => True }
+//           
+//          |
+//         \/
+//
+// (Not a) = a { False True }
+//
+//          |
+//         \/
+
+(Not a) = (a False True)
+//        |-----------|
+//              |
+//            pattern-match disfarçado
+
+
+//          \/ dado, ou seja, o esquema do pattern-match só funciona quando aplicamos um dado a algo 
+(Show b) = (b "True" "False")
+
+// Bool.and em Kind:
+// Bool.and (a: Bool) (b: Bool)  : Bool
+// Bool.and Bool.true  b         = b
+// Bool.and Bool.false b         = Bool.false
+
+// (And a b) = match a {
+//                  True  => b
+//                  False => False
+//               }
+
+(And a b) = (a b False)
+
+
+// New = λfst λsnd  λnew (new fst snd)
+
+// (Swap p) = match p {
+  // new => New p.snd p.fst
+  // }
+
+(Swap p) = (p λfst λsnd (Pair.new snd fst))
+
+
+Zero =    λzero λsucc zero
+Succ = λn λzero λsucc (succ n)
+
+(Double n) =  (n Zero λp ((Succ) ((Succ) (Double p))))
+  
+
+(Main) =
+  // (MyTrue False)
+  // (Show (Not (Not True)))
+  (Show (And False False))
+  // True
+  // "test"
+
+
+
+
+

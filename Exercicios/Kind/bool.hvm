@@ -1,0 +1,51 @@
+True  = λtrue λfalse true 
+False = λtrue λfalse false
+
+(Show a) = (a "TRUE" "FALSE")
+
+// Is true
+// Returns true if input is true
+(IsTrue a) = (a)
+
+// Is false
+// Returns true if input is false
+(IsFalse a) = (a False True)
+
+// Negation
+// Returns the opposite of a Bool
+(Not a) = (a False True)
+
+// And
+// Returns true if both inputs are true
+(And a b) = (a b False)
+
+// Equal
+// Returs true if both inputs are identical
+(Eql a b) = (a b (b False True))
+
+// Xor
+// Returns true if both inputs are different
+(Xor a b) = (a (b False True)(b True False))
+
+// Nor
+// Returns true if both inputs are false
+(Nor a b) = (a False (b False True))
+
+// Nand
+// Returns false only if both inputs are true
+(Nand a b) = (a (b False True) True)
+
+// Xnor
+// Returns true if both inputs are identical
+(Xnor a b) = (a b (b False True))
+
+(Main) =
+  // (Show (IsFalse True))
+  // (Show (Not True))
+  // (Show (And False True))
+  // (Show (Eql False False))
+  // (Show (Xor False False))
+  // (Show (Nor False False))
+  // (Show (Nand True True))
+  (Show (Xnor True True))
+  // "test"

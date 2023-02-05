@@ -1,0 +1,45 @@
+Scott == Tipos Nativos
+----------------------
+- Pattern-Match = tempo constante 
+- Scott-Encoding é propenso a fusão
+
+Church
+------
+- Pattern-Match = tempo linear
+- Propenso a fusão gourmet
+
+
+\/ eficiente
+(Dot Nil         Nil)         = 0
+(Dot (Cons a as) (Cons b bs)) = (+ (* a b) (Dot as bs))
+
+\/ elegante
+(Dot a b) = (Fold (+) 0 (Zip (*) a b))
+--------------------------
+
+//(Map (+ 1) (Map (* 2) (Filter even (Map (/ 3) (.....
+
+main
+  = build
+  . map (+ 1)
+  . map (* 2)
+  . filter even
+  . map (/ 3)
+  . fold
+  $ [1 .. 10000000000000]
+
+
+  (Cons 1 (Cons 2 (Cons 3 Nil)))
+  ------------------------------
+  λcons λnil (cons 1 (cons 2 (cons 3 nil)))
+
+
+
+
+
+
+
+  map reduce
+
+  Haskell :(
+

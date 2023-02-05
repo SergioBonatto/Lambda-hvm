@@ -1,0 +1,165 @@
+//// Aplicar Scott = Pattern Match
+//(n
+  //// case succ
+  //λpred(...)
+  //// case zero
+  //case_zero
+//)
+
+//// Aplicar Church = Fold Recursivo
+//(n
+  //// case succ
+  //λpred(...)
+  //// case zero
+  //case_zero
+//)
+
+
+//Double de 3 em Church
+//λs λz (s (s (s z)))
+//-------------------
+//(λx(S (S x)) (λx(S (S x)) (λx(S (S x)) Z)))
+//-------------------------------------------
+//(λx(S (S x)) (λx(S (S x)) ((S (S Z)))))
+//---------------------------------------
+//(λx(S (S x)) ((S (S ((S (S Z)))))))
+//-----------------------------------
+//((S (S ((S (S ((S (S Z)))))))))
+
+
+(Concat String.nil         ys) = String.nil
+(Concat (String.cons x xs) ys) = (String.cons x (Concat xs ys))
+
+// From Nat to U60
+(View Zero)     = 0
+(View (Succ n)) = (+ 1 (View n))
+
+// From Church Nat to U60
+(CView n) = (n λp(+ 1 p) 0)
+
+// From Scott Nat to U60
+(SView n) = (n λp(+ 1 (SView p)) 0)
+
+(If True  a b) = a
+(If False a b) = b
+
+// Generates a Native Nat
+(Gen 0) = Zero
+(Gen n) = (Succ (Gen (- n 1)))
+
+// Generates a Scott Nat
+(SGen 0) = SZero
+(SGen n) = ((SSucc) (SGen (- n 1)))
+
+// Pair match
+(Pair.match (Pair a b) f) = (f a b)
+
+// Generates a Church Nat
+(CGen 0) = CZero
+(CGen n) = ((CSucc) (CGen (- n 1)))
+
+// Bool
+STrue  = λtrue λfalse true
+SFalse = λtrue λfalse false
+
+// Pair Scott Encoding
+SNew = λfst λsnd λnew (new fst snd)
+
+// Nat Scott Encoding
+SSucc = λpred λsucc λzero (succ pred)
+SZero =       λsucc λzero zero
+
+// Church Scott Encoding
+CSucc = λpred λsucc λzero (succ (pred succ zero))
+CZero =       λsucc λzero zero
+
+// Church Nat Pred
+CPred = λn ((SSnd) (n λx((λpair (pair λb λn (b ((SNew) SFalse CZero) ((SNew) SFalse ((CSucc) n))))) x) ((SNew) STrue CZero)))
+
+// Scott Pair accessors
+SFst = λpair (pair λa λb (a))
+SSnd = λpair (pair λa λb (b))
+
+// Church Nat
+CIsZero = λn (n λn(False) True)
+
+// Id a Native Nat
+(Id Zero)     = Zero
+(Id (Succ n)) = (Succ (Id n))
+
+// Id a Scott Nat
+SId = λn (n
+  λpred ((SSucc) ((SId) pred))
+  SZero
+)
+
+// Doubles a Native Nat
+(Double Zero)     = Zero
+(Double (Succ n)) = (Succ (Succ (Double n)))
+
+// Double a Scott Nat
+SDouble = λn (n
+  λpred ((SSucc) ((SSucc) ((SDouble) pred)))
+  SZero
+)
+
+// Church Pred (Bottom Up)
+// - A pair is used to lift the initial state from the last zero to the first succ
+// - Then, you use Pair.snd to extract the final result
+CPred.BU = λn (n
+  // fold succ: next state
+  λstate
+    (Pair.match state λb λn
+    (Pair False (If b λx(x) λx(CSucc x)))) 
+
+  // fold zero: init state
+  (Pair True CZero)
+)
+
+// Church Pred (Top Down)
+// - A lambda is used to propagate the state from the first succ to the last zero
+// - You apply the final result to the initial state
+CPred.TD = λn ((n
+
+  // fold succ
+  λrec_pred λb
+    ((If b λx(x) (CSucc))
+     (rec_pred False))
+
+  // fold zero
+  zero
+
+) True)
+
+// Estudar:
+// 1. CPred.BU
+// 2. CPred.TD
+
+// Fazer:
+// 1. CId : CNat -> CNat
+// 2. CDouble : CNat -> CNat
+// 3. CTriple : CNat -> CNat
+// 4. Show (3 -> "SSSZ") : CNat -> String
+// 5. Ones (3 -> (List.cons 1 (List.cons 1 (List.cons 1 List.nil)))) : CNat -> List U60
+// 6. Half.BU : CNat -> U60
+// 7. Half.TD : CNat -> U60
+// 8. Equal.BU : U60 -> CNat -> Bool
+// 9. Equal.TD : U60 -> CNat -> Bool
+
+(Main n) = 
+  let s3 = (SGen 3)
+  let c3 = (CGen 4)
+
+  let n20 = (Succ (Succ (Succ (Succ (Succ (Succ (Succ (Succ (Succ (Succ (Succ (Succ (Succ (Succ (Succ (Succ (Succ (Succ (Succ (Succ Zero))))))))))))))))))))
+  let s20 = ((SSucc) ((SSucc) ((SSucc) ((SSucc) ((SSucc) ((SSucc) ((SSucc) ((SSucc) ((SSucc) ((SSucc) ((SSucc) ((SSucc) ((SSucc) ((SSucc) ((SSucc) ((SSucc) ((SSucc) ((SSucc) ((SSucc) ((SSucc) SZero))))))))))))))))))))
+  let c20 = ((CSucc) ((CSucc) ((CSucc) ((CSucc) ((CSucc) ((CSucc) ((CSucc) ((CSucc) ((CSucc) ((CSucc) ((CSucc) ((CSucc) ((CSucc) ((CSucc) ((CSucc) ((CSucc) ((CSucc) ((CSucc) ((CSucc) ((CSucc) CZero))))))))))))))))))))
+
+  //(Id (Gen 10000))
+  //((SId) ((SId) ((SId) ((SId) s20))))
+  (CView
+    ((CDouble) ((CDouble) ((CDouble) ((CDouble) ((CDouble) ((CDouble) ((CDouble) ((CDouble)
+    ((CDouble) ((CDouble) ((CDouble) ((CDouble) ((CDouble) ((CDouble) ((CDouble) ((CDouble)
+    c20
+    ))))))))
+    ))))))))
+  )

@@ -1,0 +1,104 @@
+//FORMAS DE REPRESENTAR DADOS EM PROGRAMACAO FUNCIONAL
+//1. Construtores Nativos
+//2. Lambdas - Scott Encoding
+//3. Lambdas - Church Encoding
+
+type Bool {
+  true
+    false
+}
+
+True  = λtrue λfalse true 
+False = λtrue λfalse false
+
+type Pair {
+  new (fst: Bool) (snd: Bool)
+}
+
+New = λfst λsnd λnew (new fst snd)
+
+  type Maybe {
+    none
+    some (value: Bool)
+  }
+
+None =        λnone λsome none
+Some = λvalue λnone λsome (some value)
+
+  type Nat {
+    zero
+      succ (pred: Nat)
+      
+  }
+
+// Scott Encoding
+Zero =       λzero λsucc zero
+Succ = λpred λzero λsucc (succ pred)
+
+// Church Encoding
+Zero =       λzero λsucc zero
+Succ = λpred λzero λsucc (succ (pred zero succ))
+
+  type Tree {
+    leaf
+      node (val: Nat) (left: Tree) (right: Tree)
+      
+  }
+
+Leaf =                   λleaf λnode leaf
+Node = λval λleft λright λleaf λnode (node val (left leaf node) (right leaf node))
+
+  (String.concat String.nil         ys) = ys
+  (String.concat (String.cons x xs) ys) = (String.cons x (String.concat xs ys))
+
+  (Bool.show b) = (b "True" "False") 
+
+  True  = λtrue λfalse true
+  False = λtrue λfalse false
+
+  // Not a = match a { True => False; False => True  }
+  (Not a) = (a False True)
+
+  // And a b = match a { True => match b { True => True; False => False  }; False => match b { True => False; False => False;  }  }
+  (And a b) = (a (b True False) (b False False))
+
+  // ----------------------------------------------------------
+
+  New = λfst λsnd λnew (new fst snd) 
+
+  // Swap p = match p { new a b => Pair.new b a  }
+  (Swap p) = (p λa λb (Pair.new b a))
+
+  // ----------------------------------------------------------
+
+  (Nat.show n) = (n "Zero" λp(String.concat (String.concat "(Succ " (Nat.show p)) ")"))
+
+  Zero =    λzero λsucc zero
+  Succ = λn λzero λsucc (succ n)
+
+
+  // λzero λsucc (succ λzero λsucc (succ λzero λsucc zero))
+  Two = ((Succ) ((Succ) Zero))
+
+  (Double n) = (n Zero λp((Succ) ((Succ) (Double p))))
+
+  (Main n) = (Nat.show (Double (Double ((Succ) ((Succ) Zero)))))
+
+  (Inc n) = (Succ n)
+
+
+  //(Not True)
+  //----------
+  //(Not (λtrue λfalse true))
+  //-------------------------
+  //((λtrue λfalse true) False True)
+  //---------------------------------
+  //((λtrue λfalse true) (λtrue λfalse false) (λtrue λfalse true))
+  //--------------------------------------------------------------
+  //((λa λb a) (λc λd d) (λe λf e))
+  //-------------------------------
+  //((λb (λc λd d)) (λe λf e))
+  //--------------------------
+  //λc λd d
+  //-------
+  //False)
