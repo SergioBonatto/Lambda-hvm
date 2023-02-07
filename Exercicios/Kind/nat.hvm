@@ -1,0 +1,38 @@
+Zero =    λsucc λzero zero
+Succ = λn λsucc λzero (succ n)
+
+(String.concat String.nil         ys) = ys 
+(String.concat (String.cons x xs) ys) = (String.cons x (String.concat xs ys)) 
+
+(Boolshow a) = (a "true" "false")
+
+(Natshow n) = (n "Zero" λp ( String.concat ( String.concat "(Succ " (Natshow p)) ")"))
+
+// Increment
+// 2 + 1 = 3
+// 0 + 1 = 1
+(Inc a) = ((Succ) a)
+
+// Return True if nat is Zero else false
+// a = 0 -> Bool.true
+// a = 1 -> Bool.False
+// a = 2 -> Bool.false
+(IsZero a) = (a (λn False) True)
+
+// Decrement
+// 2 - 1 = 1
+// 0 - 1 = 0
+// (Dec a) = (a "foi" Zero)
+
+
+(Double a) = (a Zero λn ((Succ) ((Succ) (n))))
+
+
+
+(Main) =
+(
+  // (Inc (Inc Zero))
+  // IsZero ((Succ) ((Succ) (Zero)))
+  // Natshow (Double (Inc ( Inc Zero )))
+  Natshow (Double Zero)
+)

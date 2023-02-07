@@ -17,18 +17,15 @@ Some  = λval λnone λsome (some val)
 (IsSome a) = (a False (λb True))
 
 // Returns true if both inputs are identical
-(IsEql a b) = (a (b True (λa False)) (b (λa False) (λb (BoolEql a b))))
-//  IsEql a b = match a {
-//    None => match b {
-//            None   => true
-//            Some b => false
-//    }
-//    Some a => match b {
-//            None   => false
-//            Some b => (BoolEql a b)
-//    }
-//  }
+(IsEql a b ) = (a (b True (λb False )) (λa (b False (λb (BoolEql a b)))))
 
+// Returns the value inside the MaybeBool.
+// If there is no value contained, returns v instead
+(Extract a v) = (a v (λb b))
+
+// Create a MaybeBool from a Boolean
+// create(Bool.false) -> MaybeBool(Bool.false)
+(Create a) = ((Some) a)
 
 (Main) =
   // (Show False)
@@ -37,5 +34,8 @@ Some  = λval λnone λsome (some val)
   // (Show (IsNone None))
   // (Show (IsSome None))
   // (Show (IsSome ((Some) (False))))
-  (Show (IsEql ((Some) (True)) (((Some) (False) ))))
+  // (Show (IsEql (None) (None)))
+  // (Show (Extract ((Some) False ) (True)))
+  (Show (IsSome (Create False)))
+
   

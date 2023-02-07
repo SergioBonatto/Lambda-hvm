@@ -5,7 +5,7 @@
 
 type Bool {
   true
-    false
+  false
 }
 
 True  = λtrue λfalse true 
@@ -27,7 +27,7 @@ Some = λvalue λnone λsome (some value)
 
   type Nat {
     zero
-      succ (pred: Nat)
+    succ (pred: Nat)
       
   }
 
@@ -41,7 +41,7 @@ Succ = λpred λzero λsucc (succ (pred zero succ))
 
   type Tree {
     leaf
-      node (val: Nat) (left: Tree) (right: Tree)
+    node (val: Nat) (left: Tree) (right: Tree)
       
   }
 

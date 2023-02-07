@@ -1,0 +1,38 @@
+True = λtrue λfalse true
+False = λtrue λfalse false
+
+(Show a) = (a "true" "false")
+
+(Bool.eql a b) = (a b (b False True))
+
+(Bool.not a) = (a False True)
+
+New = λfst λsnd λnew (new fst snd)
+
+// Swaps the elements of a pair
+(Swap p) = (p λa λb ((New) b a)) 
+
+// Returns the first element of a pair
+(Fst p) = (p (λfst λsnd fst))
+
+// Returns the second element of a pair
+(Snd p) = (p (λfst λsnd snd ))
+
+// Creates a Pair from 2 element
+(Create a b) = ((New) a b)
+
+// Applies a function to both elements of a Pair
+(Map f p) = (p (λfst λsnd ((New) (f fst) (f snd))))
+
+
+
+Main = (
+  // Show (Bool.not False)
+  // Swap ((New) "true" "false")
+  // Fst ((New) "false" "true")
+  // Snd ((New) "false" "true")
+ // Create "false" "true"
+ (Map λa (Show a)  ((New) (True) (False)))
+ 
+)
+
