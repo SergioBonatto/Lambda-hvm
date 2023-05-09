@@ -1,0 +1,40 @@
+// (λy (y y))(λf (λx (f (fx))))
+// let g =  ((λy (y y))(λf (λx (f (fx)))))
+
+// n^n
+
+Zero =    λzero λsucc zero
+Succ = λn λzero λsucc (succ n)
+
+(String.concat String.nil         ys) = ys
+(String.concat (String.cons x xs) ys) = (String.cons x (String.concat xs ys))
+
+(Natshow n)  = (n "Zero" λp ( String.concat ( String.concat "(Succ " (Natshow p)) ")"))
+(CNatshow n) = (n "Succ" "Zero")
+
+
+// (λy (y y))(λf (λx (f (fx))))
+(Num) = (λsucc (λzero (succ (succ (succ zero)))))
+(H) = (λf (λx (f (f (f x)))))
+// (G) = (λy (y y) (λf (λx (f (f x)))))
+(G y) = ((λy y y) H)
+// (G) = ((λy (y y)) (λf (λx (f (f x)))))
+// (J) = (λy (y y))
+// (K y) = ((λy y y) (λf (λx (f (f x)))))
+// (F y) = (λx (x x) y)
+// (J) = (λx (λy (x (x (x (x y))))))
+// (V) = (λx (x x) λf λx (f (f x)))
+(V) = (λy (y y) λf λx (f (f x)))
+
+(Z) = ( λs λz (z))
+
+(Main) = (
+ ((H)(H))
+  // (Natshow ((Succ) (Zero)))
+ // (G ((H) (H)))
+ // (G H)
+ // (J)
+ // (V)
+ )
+
+
